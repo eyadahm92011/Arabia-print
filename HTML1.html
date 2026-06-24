@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabia Print | Since 2000</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        #loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0a1628;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 2rem;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+        #loader.hide { opacity: 0; visibility: hidden; }
+        .loader-logo-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+        .loader-ring {
+            position: absolute; width: 130px; height: 130px;
+            border-radius: 50%; border: 3px solid transparent;
+            border-top-color: #0d9488; border-right-color: rgba(13,148,136,0.3);
+            animation: spin 1.2s linear infinite;
+        }
+        .loader-ring-outer {
+            width: 155px; height: 155px;
+            border-top-color: transparent;
+            border-bottom-color: #5c8ceb; border-left-color: rgba(92,140,235,0.3);
+            animation: spin 2s linear infinite reverse;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-logo-img {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: contain;
+            background: #fff; padding: 6px;
+            box-shadow: 0 0 30px rgba(13,148,136,0.4);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(13,148,136,0.3); }
+            50% { box-shadow: 0 0 45px rgba(13,148,136,0.7), 0 0 70px rgba(92,140,235,0.3); }
+        }
+        .loader-brand {
+            font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+            color: #ffffff; letter-spacing: 3px; text-transform: uppercase;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.3s;
+        }
+        .loader-brand span { color: #0d9488; }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loader-bar-wrap {
+            width: 220px; height: 3px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.5s;
+        }
+        .loader-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #5c8ceb, #0d9488); border-radius: 3px;
+            animation: fill-bar 2s cubic-bezier(0.4,0,0.2,1) forwards; animation-delay: 0.5s;
+        }
+        @keyframes fill-bar { to { width: 100%; } }
+        .loader-tagline {
+            color: rgba(255,255,255,0.4); font-size: 0.78rem; letter-spacing: 2.5px;
+            text-transform: uppercase; font-family: 'Inter', sans-serif;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.7s;
+        }
+
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        :root {
+            --primary: #1a4474; --accent: #0d9488;
+            --bg: #f8fafc; --text: #1e293b;
+            --card-bg: #ffffff; --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            --card-hover-shadow: 0 20px 40px rgba(13,148,136,0.16);
+            --border: #e2e8f0; --project-hover-shadow: 0 20px 40px rgba(13,148,136,0.18);
+            --footer-bg: #0a1628; --input-bg: rgba(255,255,255,0.15);
+            --dropdown-bg: #ffffff; --dropdown-text: #1e293b;
+            --dropdown-hover: #f1f5f9; --team-icon-bg: #f1f5f9;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --text: #f1f5f9;
+            --card-bg: #1e293b; --card-shadow: 0 4px 24px rgba(0,0,0,0.25);
+            --card-hover-shadow: 0 20px 40px rgba(13,148,136,0.28);
+            --border: #334155; --project-hover-shadow: 0 20px 40px rgba(13,148,136,0.3);
+            --footer-bg: #020617; --dropdown-bg: #1e293b;
+            --dropdown-text: #f1f5f9; --dropdown-hover: #334155; --team-icon-bg: #334155;
+        }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; transition: background 0.35s, color 0.35s; }
+        
+        [data-lang="ar"] { direction: rtl; }
+        [data-lang="ar"] .header-right { margin-right: auto; margin-left: 0; }
+        [data-lang="ar"] .ct-content { text-align: right; }
+
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+            background: linear-gradient(90deg, #5c8ceb, #0d9488);
+            z-index: 2000; transition: width 0.1s linear;
+        }
+
+        header {
+            background: var(--primary);
+            position: fixed; width: 100%; top: 0; left: 0;
+            z-index: 1000; box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.6rem 2rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .header-logo-img {
+            width: 46px; height: 46px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.7); background: #fff; transition: transform 0.3s;
+        }
+        .logo-link:hover .header-logo-img { transform: rotate(8deg) scale(1.05); }
+        .header-logo-text {
+            color: #fff; font-family: 'Syne', sans-serif; font-size: 1.35rem;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .header-right { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+        .nav-links { display: flex; align-items: center; gap: 0.3rem; }
+        .dropdown { position: relative; display: inline-block; }
+        .nav-links a, .dropdown-btn {
+            color: #fff; text-decoration: none; font-weight: 600;
+            padding: 0.45rem 0.9rem; border-radius: 6px;
+            background: none; border: none; font-size: 0.95rem; cursor: pointer;
+            transition: background 0.2s; white-space: nowrap;
+        }
+        .nav-links a:hover, .dropdown-btn:hover { background: var(--accent); }
+        .dropdown-content {
+            display: none; position: absolute; background: var(--dropdown-bg);
+            min-width: 220px; box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            border-radius: 10px; z-index: 1001; top: calc(100% + 6px); left: 0;
+            overflow: hidden; border: 1px solid var(--border);
+            animation: dropdown-in 0.2s ease;
+        }
+        @keyframes dropdown-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        [data-lang="ar"] .dropdown-content { left: auto; right: 0; }
+        .dropdown-content a {
+            color: var(--dropdown-text) !important; padding: 0.65rem 1rem;
+            text-decoration: none; display: block; font-weight: 500; font-size: 0.88rem;
+            transition: background 0.15s, padding-left 0.15s;
+        }
+        .dropdown-content a:hover { background: var(--dropdown-hover); padding-left: 1.3rem; }
+        [data-lang="ar"] .dropdown-content a:hover { padding-left: 1rem; padding-right: 1.3rem; }
+        .dropdown:hover .dropdown-content { display: block; }
+
+        .search-container {
+            display: flex; align-items: center;
+            background: var(--input-bg); padding: 0.38rem 0.75rem;
+            border-radius: 50px; border: 1px solid rgba(255,255,255,0.3);
+            transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+        .search-container:focus-within {
+            background: #fff; border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.2);
+        }
+        .search-input {
+            background: none; border: none; outline: none; color: #fff;
+            font-size: 0.88rem; padding: 0.2rem 0.5rem; width: 150px;
+            transition: width 0.3s, color 0.3s;
+        }
+        .search-container:focus-within .search-input { color: #1e293b; width: 180px; }
+        .search-input::placeholder { color: rgba(255,255,255,0.65); }
+        .search-container:focus-within .search-input::placeholder { color: #94a3b8; }
+        .search-btn {
+            background: none; border: none; color: #fff; cursor: pointer;
+            font-size: 0.88rem; display: flex; padding: 0.2rem; transition: color 0.2s;
+        }
+        .search-container:focus-within .search-btn { color: var(--accent); }
+        .settings-controls { display: flex; align-items: center; gap: 0.5rem; }
+        .theme-toggle-btn, .lang-toggle-btn {
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+            color: #fff; padding: 0.45rem; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; width: 36px; height: 36px; transition: background 0.2s, transform 0.2s;
+        }
+        .lang-toggle-btn { font-size: 0.8rem; font-weight: 700; }
+        .theme-toggle-btn:hover, .lang-toggle-btn:hover { background: var(--accent); transform: scale(1.08); }
+
+        .hero {
+            position: relative; margin-top: 64px; padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, rgba(26,68,116,0.88) 0%, rgba(13,148,136,0.82) 100%),
+                        url('WhatsApp-Image-2025-11-05-at-12.04.34-PM.jpeg') center/cover no-repeat fixed;
+            color: #fff; text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(13,148,136,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(11, 177, 5, 0.12); border: 1px solid rgba(255,255,255,0.25);
+            padding: 6px 16px; border-radius: 50px; font-size: 0.78rem;
+            font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+            margin-bottom: 1.5rem; backdrop-filter: blur(8px);
+            animation: fade-in-up 0.6s ease forwards;
+        }
+        .hero-badge i { color: #34d399; }
+        .hero-logo {
+            width: 130px; height: 130px; border-radius: 50%; object-fit: contain;
+            background: #fff; padding: 8px; margin-bottom: 1.8rem;
+            box-shadow: 0 12px 35px rgba(255,0,0,0.25), 0 0 0 4px rgba(17, 161, 60, 0.2);
+            animation: fade-in-up 0.7s ease forwards; animation-delay: 0.15s; opacity: 0;
+        }
+        .hero h1 {
+            font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 800; margin-bottom: 1rem; line-height: 1.15;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            animation: fade-in-up 0.7s ease forwards; animation-delay: 0.3s; opacity: 0;
+        }
+        .hero p {
+            font-size: 1.15rem; max-width: 620px; margin: 0 auto;
+            opacity: 0.9; font-weight: 500; text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+            animation: fade-in-up 0.7s ease forwards; animation-delay: 0.45s; opacity: 0;
+        }
+        
+        .hero-title-rotate {
+            display: flex; justify-content: center; align-items: center;
+            gap: 10px; flex-wrap: wrap; overflow: visible;
+        }
+        .hero-rotate-wrap {
+            position: relative; display: inline-block; min-width: 240px;
+            height: 1.3em; overflow: visible; vertical-align: bottom;
+        }
+        .hero-rotate-word {
+            position: absolute; top: 0; left: 0; right: 0; text-align: center;
+            white-space: nowrap; color: #34d399; opacity: 0;
+            transform: translateY(100%); transition: all 0.6s ease;
+        }
+        .hero-rotate-word.active { opacity: 1; transform: translateY(0); }
+        .hero-rotate-word.exit-up { opacity: 0; transform: translateY(-100%); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 5rem 2rem; }
+        .section-title {
+            text-align: center; font-family: 'Syne', sans-serif;
+            font-size: 2rem; font-weight: 800; margin-bottom: 3.5rem;
+            color: var(--primary); position: relative;
+        }
+        [data-theme="dark"] .section-title { color: #f1f5f9; }
+        .section-title::after {
+            content: ''; display: block; width: 48px; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            margin: 10px auto 0; border-radius: 2px;
+        }
+
+        /* ─── MISSING TEAM CAROUSEL (CT) STYLES ──────────────────────── */
+        .ct-wrapper { margin-bottom: 6rem; background: var(--card-bg); border-radius: 24px; padding: 3rem; border: 1px solid var(--border); box-shadow: var(--card-shadow); overflow: hidden; }
+        .ct-grid { display: grid; grid-template-columns: 1.1fr 1.3fr; gap: 4rem; align-items: center; }
+        @media (max-width: 868px) { .ct-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; } [data-lang="ar"] .ct-content { text-align: center; } }
+        .ct-image-stage { position: relative; height: 360px; display: flex; align-items: center; justify-content: center; perspective: 1000px; transform-style: preserve-3d; }
+        .ct-img { position: absolute; width: 220px; height: 280px; object-fit: cover; border-radius: 18px; border: 4px solid var(--card-bg); box-shadow: 0 15px 35px rgba(0,0,0,0.15); transform-origin: center; background: #fff; }
+        .ct-content { display: flex; flex-direction: column; justify-content: space-between; min-height: 280px; }
+        .ct-role { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 2px; background: rgba(13,148,136,0.1); padding: 4px 14px; border-radius: 50px; display: inline-block; width: max-content; margin-bottom: 0.8rem; }
+        @media (max-width: 868px) { .ct-role { margin: 0 auto 0.8rem; } }
+        .ct-name { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem; }
+        [data-theme="dark"] .ct-name { color: #fff; }
+        .ct-divider { width: 40px; height: 4px; background: var(--accent); border-radius: 2px; margin-bottom: 1.5rem; }
+        @media (max-width: 868px) { .ct-divider { margin: 0 auto 1.5rem; } }
+        .ct-quote { font-size: 1.1rem; font-weight: 500; color: var(--text); opacity: 0.85; line-height: 1.7; min-height: 110px; margin-bottom: 1.5rem; }
+        .ct-word { display: inline-block; animation: ct-word-in 0.4s ease forwards; opacity: 0; transform: translateY(6px); }
+        @keyframes ct-word-in { to { opacity: 1; transform: translateY(0); } }
+        .ct-call-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--primary); color: #fff; padding: 10px 26px; border-radius: 50px; text-decoration: none; font-size: 0.92rem; font-weight: 600; width: max-content; transition: background 0.2s, transform 0.2s; margin-bottom: 1.5rem; box-shadow: 0 5px 15px rgba(26,68,116,0.25); }
+        .ct-call-btn:hover { background: var(--accent); transform: translateY(-2px); }
+        @media (max-width: 868px) { .ct-call-btn { margin: 0 auto 1.5rem; } }
+        .ct-arrows { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        @media (max-width: 868px) { .ct-arrows { justify-content: center; } }
+        
+        .ct-arrow {
+            width: 50px; height: 50px; border-radius: 50%; border: none;
+            background: #0d9488; color: #fff; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 20px rgba(13,148,136,0.3); transition: all .3s ease;
+            overflow: hidden; padding: 0;
+        }
+        .ct-arrow img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        .ct-arrow:hover { transform: translateY(-3px); background: #0f766e; }
+        
+        .ct-dots { display: flex; gap: 8px; margin-top: 0.5rem; }
+        @media (max-width: 868px) { .ct-dots { justify-content: center; } }
+        .ct-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--border); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+        .ct-dot.active { background: var(--accent); transform: scale(1.2); }
+
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        @media (max-width: 992px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+        .project-item {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            display: flex; flex-direction: column; position: relative;
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .project-item:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.10); border-color: #cbd5e1; }
+        a.project-item { cursor: pointer; text-decoration: none; color: inherit; }
+
+        #page-transition {
+            position: fixed; inset: 0; z-index: 9998;
+            background: var(--bg);
+            transform: scaleY(0); transform-origin: bottom;
+            transition: transform 0.55s cubic-bezier(0.77,0,0.175,1);
+            pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #page-transition.active { transform: scaleY(1); }
+        #page-transition .pt-logo {
+            opacity: 0; transform: scale(0.6);
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem;
+            color: var(--accent); letter-spacing: 3px; text-transform: uppercase;
+            transition: opacity 0.35s ease 0.25s, transform 0.35s ease 0.25s;
+        }
+        #page-transition.active .pt-logo { opacity: 1; transform: scale(1); }
+        
+        .project-image-wrapper {
+            width: 100%; aspect-ratio: 1 / 1; overflow: hidden; position: relative;
+            background: #ffffff; display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .project-image { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.4s ease; padding: 0.5rem; }
+        .project-item:hover .project-image { transform: scale(1.04); }
+        .project-overlay { position: absolute; top: 10px; left: 10px; z-index: 10; }
+        [data-lang="ar"] .project-overlay { left: auto; right: 10px; }
+        .project-overlay-tag {
+            background: #f0f2f2; color: #0f1111; border: 1px solid var(--border);
+            padding: 3px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .project-info { padding: 0.9rem 1rem 1.2rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .project-info h3 {
+            font-family: 'Inter', sans-serif; font-size: 0.95rem; line-height: 1.4;
+            color: #0f1111; margin-bottom: 0.4rem; font-weight: 600;
+            min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        [data-theme="dark"] .project-info h3 { color: #f1f5f9; }
+        .project-info p {
+            font-size: 0.82rem; line-height: 1.55; opacity: 0.65;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            overflow: hidden; min-height: 3.9em; margin-bottom: 1rem;
+        }
+        .project-info .lang-en, .project-info .lang-ar { display: flex; flex-direction: column; flex-grow: 1; }
+        
+        .project-view-link { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; font-size: 0.8rem; font-weight: 600; color: var(--accent); }
+        .project-view-link i { font-size: 0.7rem; transition: transform 0.2s ease; }
+        .project-item:hover .project-view-link i { transform: translateX(3px); }
+        [data-lang="ar"] .project-item:hover .project-view-link i { transform: translateX(-3px); }
+
+        [data-lang="en"] .lang-en { display: block; }
+        [data-lang="en"] .lang-en-inline { display: inline; }
+        [data-lang="en"] .lang-ar { display: none; }
+        [data-lang="en"] .lang-ar-inline { display: none; }
+        [data-lang="ar"] .lang-en { display: none; }
+        [data-lang="ar"] .lang-en-inline { display: none; }
+        [data-lang="ar"] .lang-ar { display: block; }
+        [data-lang="ar"] .lang-ar-inline { inline-block: inline; }
+
+        footer { background: var(--footer-bg); color: #fff; padding: 4rem 2rem 1.5rem; margin-top: 4rem; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 2.5rem; }
+        .footer-section h4 { color: var(--accent); margin-bottom: 1rem; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.5px; }
+        .footer-section p { font-size: 0.88rem; color: #94a3b8; line-height: 1.75; }
+        .footer-phones, .footer-emails { display: flex; flex-direction: column; gap: 0.55rem; }
+        .footer-phones a, .footer-emails a { color: #cbd5e1; text-decoration: none; font-size: 0.9rem; transition: color 0.2s, padding-left 0.2s; display: flex; align-items: center; gap: 6px; }
+        .footer-phones a::before { content: '↗'; font-size: 0.75rem; color: var(--accent); }
+        .footer-phones a:hover, .footer-emails a:hover { color: var(--accent); padding-left: 4px; }
+        .social-icons { display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .social-icons img { width: 32px; height: 32px; object-fit: contain; vertical-align: middle; margin-right: 8px; }
+        
+        .fb-only-logo, .whatsapp-only-logo { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 20px; height: auto; border-radius: 14px; transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s; text-decoration: none; }
+        .fb-only-logo i, .whatsapp-only-logo i { font-size: 1.8rem; }
+        .fb-only-logo span, .whatsapp-only-logo span { font-size: 0.85rem; font-weight: 700; }
+        .fb-only-logo { color: #1877f2; background: rgba(24,119,242,0.15); border: 1px solid rgba(24,119,242,0.3); }
+        .fb-only-logo:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(24,119,242,0.45); background: #1877f2; color: #fff; }
+        .whatsapp-only-logo { color: #25D366; background: rgba(37,211,102,0.15); border: 1px solid rgba(37,211,102,0.3); }
+        .whatsapp-only-logo:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(37,211,102,0.45); background: #25D366; color: #fff; }
+        
+        .footer-next-page { text-align: center; margin-top: 2rem; }
+        .next-page-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: var(--accent); color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 6px 20px rgba(13,148,136,0.35); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+        .next-page-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(13,148,136,0.45); background: #0b7a70; }
+        .footer-bottom { text-align: center; padding-top: 1.5rem; font-size: 0.82rem; color: #475569; }
+
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        #back-to-top {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 800;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: var(--accent); color: #fff; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; box-shadow: 0 6px 18px rgba(13,148,136,0.4);
+            opacity: 0; transform: translateY(12px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+        }
+        #back-to-top.show { opacity: 1; transform: translateY(0); }
+        #back-to-top:hover { background: #0b7a70; }
+
+        @media (max-width: 768px) {
+            .nav-container { padding: 0.5rem 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body data-theme="light" data-lang="en">
+
+    <div id="loader">
+        <div class="loader-logo-wrap">
+            <div class="loader-ring loader-ring-outer"></div>
+            <div class="loader-ring"></div>
+            <img src="479348739_1168674148599298_1727170209279400086_n.jpg" alt="Arabia Print Logo" class="loader-logo-img">
+        </div>
+        <div class="loader-brand">Arabia <span>Print</span></div>
+        <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+        <div class="loader-tagline">Crafting Print Excellence Since 2000</div>
+    </div>
+
+    <div id="page-transition"><div class="pt-logo">Arabia <span style="color:var(--primary)">Print</span></div></div>
+
+    <div id="scroll-progress"></div>
+    <button id="back-to-top" title="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo-link">
+                <img src="479348739_1168674148599298_1727170209279400086_n.jpg" alt="Logo" class="header-logo-img">
+                <span class="header-logo-text">Arabia Print</span>
+            </a>
+            <div class="header-right">
+                <nav class="nav-links">
+                    <div class="dropdown">
+                        <button class="dropdown-btn">
+                            <span class="lang-en">Main Info ▾</span>
+                            <span class="lang-ar">معلومات عنا ▾</span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#main-info"><span class="lang-en">Sayed</span><span class="lang-ar">سيد</span></a>
+                            <a href="#main-info"><span class="lang-en">Ahmed</span><span class="lang-ar">أحمد</span></a>
+                            <a href="#main-info"><span class="lang-en">Ehab</span><span class="lang-ar">إيهاب</span></a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-btn">
+                            <span class="lang-en">Our Projects ▾</span>
+                            <span class="lang-ar">مشاريعنا ▾</span>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="#workers"><span class="lang-en">Creative Hub menu Design</span><span class="lang-ar">تصميم منيو هاب الإبداعي (Creative Hub)</span></a>
+                            <a href="#workers"><span class="lang-en">Sndoz Corporate Invitation Card</span><span class="lang-ar">تصميم بطاقة دعوة شركة ساندوز (Sandoz)</span></a>
+                            <a href="#workers"><span class="lang-en">Tefal Garment Steamer POS Talker</span><span class="lang-ar">توكر ترويجي لمكواة ستاند تيفال (Tefal)</span></a>
+                            <a href="#workers"><span class="lang-en">Polo Ralph Lauren Shopping Bag</span><span class="lang-ar">حقيبة تسوق بولو رالف لورين (Polo Ralph Lauren)</span></a>
+                            <a href="#workers"><span class="lang-en">Odeon Tours Note Cube Holder Box</span><span class="lang-ar">علبة حامل مكعب ملاحظات أوديون تورز (Odeon Tours)</span></a>
+                            <a href="#workers"><span class="lang-en">Al Wessam Group Stationary Design</span><span class="lang-ar">حملة تطبيق وياكتصميم مطبوعات مجموعة الوسام (Al Wessam Group)</span></a>
+                            
+                            <a href="#workers"><span class="lang-en">L'Oréal Ethics Day Backdrop Design</span><span class="lang-ar">تصميم خلفية فعالية يوم الأخلاقيات - لوريال</span></a>
+                        </div>
+                    </div>
+                    <a href="#contact" class="lang-en">Contact Us</a>
+                    <a href="#contact" class="lang-ar">اتصل بنا</a>
+                </nav>
+                <div class="search-container">
+                    <input type="text" id="projectSearch" placeholder="Search designs..." class="search-input">
+                    <button type="button" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <div class="settings-controls">
+                    <button type="button" id="themeToggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode">☀️</button>
+                    <button type="button" id="langToggle" class="lang-toggle-btn" title="Change Language">AR</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-badge"><i class="fa-solid fa-circle-check"></i> <span class="lang-en">Trusted Since 2000</span><span class="lang-ar">موثوق به منذ 2000</span></div>
+        <img src="479348739_1168674148599298_1727170209279400086_n.jpg" alt="Arabia Print Logo" class="hero-logo">
+        <h1 class="hero-title-rotate lang-en">
+            <span>Arabia Print —</span>
+            <span class="hero-rotate-wrap" id="heroRotateEn"></span>
+        </h1>
+        <h1 class="hero-title-rotate lang-ar">
+            <span>أرابيا برينت —</span>
+            <span class="hero-rotate-wrap" id="heroRotateAr"></span>
+        </h1>
+        <p class="lang-en">High-performance production, delivering top-tier print designs and business management since 2000.</p>
+        <p class="lang-ar">إنتاجية عالية الأداء، نقدم أفضل تصاميم الطباعة وإدارة الأعمال منذ عام 2000.</p>
+    </section>
+
+    <main class="container" id="main-info">
+        <h2 class="section-title reveal">
+            <span class="lang-en">About Our Team</span>
+            <span class="lang-ar">حول فريقنا</span>
+        </h2>
+        <div class="ct-wrapper reveal">
+            <div class="ct-grid">
+                <div class="ct-image-stage" id="ctStage"></div>
+                <div class="ct-content">
+                    <div class="ct-content-inner" id="ctContent"></div>
+                    <div>
+                        <div class="ct-arrows">
+                            <button class="ct-arrow" id="ctPrev" aria-label="Previous">
+                                <img src="https://static.vecteezy.com/system/resources/previews/023/790/858/original/left-arrow-icon-clipart-free-free-png.png" alt="Previous">
+                            </button>
+                            <button class="ct-arrow" id="ctNext" aria-label="Next">
+                                <img src="https://www.freepnglogos.com/uploads/arrow-symbol-png/arrow-symbol-arrow-transparent-png-image--34.png" alt="Next">
+                            </button>
+                        </div>
+                        <div class="ct-dots" id="ctDots"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="workers">
+            <h2 class="section-title reveal">
+                <span class="lang-en">Our Projects</span>
+                <span class="lang-ar">مشاريعنا</span>
+            </h2>
+            <div class="projects-grid" id="projectsGrid">
+                
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="creative hub menu design تصميم منيو هاب الابداعي"
+                   data-img="20200722_172519.jpg"
+                   data-tag-en="Menu Design" data-tag-ar="تصميم منيو"
+                   data-title-en="Creative Hub Menu Design" data-title-ar="تصميم منيو هاب الإبداعي (Creative Hub)"
+                   data-desc-en="A sophisticated multi-page booklet menu showcasing structured typography, curated sections, and sleek visual presentation for dining experiences."
+                   data-desc-ar="منيو كتيب متعدد الصفحات بتصميم راقٍ، يعرض طباعة منظمة وأقساماً منسقة وعرضاً مرئياً أنيقاً لتجارب تناول الطعام.">
+                    <div class="project-image-wrapper">
+                        <img src="20200722_172519.jpg" alt="Creative Hub Menu Design" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Menu Design</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Creative Hub Menu Design</h3>
+                            <p>A sophisticated multi-page booklet menu showcasing structured typography, curated sections, and sleek visual presentation for dining experiences.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>تصميم منيو هاب الإبداعي (Creative Hub)</h3>
+                            <p>منيو كتيب متعدد الصفحات بتصميم راقٍ، يعرض طباعة منظمة وأقساماً منسقة وعرضاً مرئياً أنيقاً لتجارب تناول الطعام.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="sandoz invitation card design تصميم بطاقة دعوة ساندوز"
+                   data-img="119667422_2765817527010537_2374405354355487813_n.jpg"
+                   data-tag-en="Print Design" data-tag-ar="تصميم مطبوعات"
+                   data-title-en="Sandoz Corporate Invitation Card" data-title-ar="تصميم بطاقة دعوة شركة ساندوز (Sandoz)"
+                   data-desc-en="A professional corporate invitation card featuring clean layout structures, sleek color transitions, and elegant corporate branding for medical events."
+                   data-desc-ar="تصميم بطاقة دعوة احترافية للشركات تتميز بهيكل تخطيطي نظيف، وتدرجات ألوان سلسة، وهوية مؤسسية أنيقة للفعاليات الطبية.">
+                    <div class="project-image-wrapper">
+                        <img src="119667422_2765817527010537_2374405354355487813_n.jpg" alt="Sandoz Corporate Invitation Card" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Print Design</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Sandoz Corporate Invitation Card</h3>
+                            <p>A professional corporate invitation card featuring clean layout structures, sleek color transitions, and elegant corporate branding for medical events.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>تصميم بطاقة دعوة شركة ساندوز (Sandoz)</h3>
+                            <p>تصميم بطاقة دعوة احترافية للشركات تتميز بهيكل تخطيطي نظيف، وتدرجات ألوان سلسة، وهوية مؤسسية أنيقة للفعاليات الطبية.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="tefal promotional point of sale talker design تصميم توكر ترويجية تيفال"
+                   data-img="20200722_173226.jpg"
+                   data-tag-en="POSM Design" data-tag-ar="تصميم مواد الدعاية"
+                   data-title-en="Tefal Garment Steamer POS Talker" data-title-ar="توكر ترويجي لمكواة ستاند تيفال (Tefal)"
+                   data-desc-en="A custom-die-cut point of sale (POSM) shelf talker designed for Tefal, highlighting product features and purchase benefits with clear typography and icons."
+                   data-desc-ar="ملصق رف ترويجي (توكر) مقصوص بشكل مخصص لمكواة تيفال، يسلط الضوء على ميزات المنتج ومزايا الشراء باستخدام خطوط وأيقونات واضحة.">
+                    <div class="project-image-wrapper">
+                        <img src="20200722_173226.jpg" alt="Tefal Garment Steamer POS Talker" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">POSM Design</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Tefal Garment Steamer POS Talker</h3>
+                            <p>A custom-die-cut point of sale (POSM) shelf talker designed for Tefal, highlighting product features and purchase benefits with clear typography and icons.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>توكر ترويجي لمكواة ستاند تيفال (Tefal)</h3>
+                            <p>ملصق رف ترويجي (توكر) مقصوص بشكل مخصص لمكواة تيفال، يسلط الضوء على ميزات المنتج ومزايا الشراء باستخدام خطوط وأيقونات واضحة.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="polo ralph lauren shopping bag design تصميم حقيبة تسوق بولو رالف لورين"
+                   data-img="117831069_2729845820607708_5661499792101846499_o.jpg"
+                   data-tag-en="Packaging Design" data-tag-ar="تصميم التعبئة والتغليف"
+                   data-title-en="Polo Ralph Lauren Shopping Bag" data-title-ar="حقيبة تسوق بولو رالف لورين (Polo Ralph Lauren)"
+                   data-desc-en="A minimalist and premium shopping bag design featuring bold branding, high-contrast typography, and a classic deep blue aesthetic for luxury retail packaging."
+                   data-desc-ar="تصميم حقيبة تسوق فاخرة وبسيطة تتميز بشعار بارز، وخطوط متباينة بوضوح، وجمالية باللون الأزرق الداكن الكلاسيكي لتغليف تجزئة راقٍ.">
+                    <div class="project-image-wrapper">
+                        <img src="117831069_2729845820607708_5661499792101846499_o.jpg" alt="Polo Ralph Lauren Shopping Bag" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Packaging Design</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Polo Ralph Lauren Shopping Bag</h3>
+                            <p>A minimalist and premium shopping bag design featuring bold branding, high-contrast typography, and a classic deep blue aesthetic for luxury retail packaging.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>حقيبة تسوق بولو رالف لورين (Polo Ralph Lauren)</h3>
+                            <p>تصميم حقيبة تسوق فاخرة وبسيطة تتميز بشعار بارز، وخطوط متباينة بوضوح، وجمالية باللون الأزرق الداكن الكلاسيكي لتغليف تجزئة راقٍ.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="odeon tours note cube holder box design تصميم علبة مكعب ملاحظات أوديون تورز"
+                   data-img="box 2.jpg"
+                   data-tag-en="Packaging Design" data-tag-ar="تصميم التعبئة والتغليف"
+                   data-title-en="Odeon Tours Note Cube Holder Box" data-title-ar="علبة حامل مكعب ملاحظات أوديون تورز (Odeon Tours)"
+                   data-desc-en="A custom branded desktop note cube dispenser featuring high-quality travel imagery and an integrated pop-up header display for corporate promotional giveaways."
+                   data-desc-ar="حامل مكعب ملاحظات مكتبي مخصص يحمل الهوية التجارية، يتميز بصور سفر عالية الجودة وواجهة عرض علوية مدمجة للهدايا الدعائية للشركات.">
+                    <div class="project-image-wrapper">
+                        <img src="box 2.jpg" alt="Odeon Tours Note Cube Holder Box" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Packaging Design</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Odeon Tours Note Cube Holder Box</h3>
+                            <p>A custom branded desktop note cube dispenser featuring high-quality travel imagery and an integrated pop-up header display for corporate promotional giveaways.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>علبة حامل مكعب ملاحظات أوديون تورز (Odeon Tours)</h3>
+                            <p>حامل مكعب ملاحظات مكتبي مخصص يحمل الهوية التجارية، يتميز بصور سفر عالية الجودة وواجهة عرض علوية مدمجة للهدايا الدعائية للشركات.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>  
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s" data-name="al wessam group stationary design تصميم مطبوعات مجموعة الوسام"
+                   data-img="20200722_171217.jpg"
+                   data-tag-en="Corporate Identity" data-tag-ar="الهوية المؤسسية"
+                   data-title-en="Al Wessam Group Stationary Design" data-title-ar="تصميم مطبوعات مجموعة الوسام (Al Wessam Group)"
+                   data-desc-en="A professional corporate stationery set featuring a wire-bound notebook and a branded pen, designed with sleek blue abstract geometry for a unified brand identity."
+                   data-desc-ar="مجموعة مطبوعات مكتبية احترافية تتضمن دفتر ملاحظات بسلك وقلم يحمل الهوية التجارية، مصممة بأشكال هندسية مجردة أنيقة باللون الأزرق لتعزيز الهوية المؤسسية الموحدة.">
+                    <div class="project-image-wrapper">
+                        <img src="20200722_171217.jpg" alt="Al Wessam Group Stationary Design" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Corporate Identity</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>Al Wessam Group Stationary Design</h3>
+                            <p>A professional corporate stationery set featuring a wire-bound notebook and a branded pen, designed with sleek blue abstract geometry for a unified brand identity.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>تصميم مطبوعات مجموعة الوسام (Al Wessam Group)</h3>
+                            <p>مجموعة مطبوعات مكتبية احترافية تتضمن دفتر ملاحظات بسلك وقلم يحمل الهوية التجارية، مصممة بأشكال هندسية مجردة أنيقة باللون الأزرق لتعزيز الهوية المؤسسية الموحدة.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="project-item reveal project-link" style="transition-delay:0.15s"
+                   data-name="loreal ethics day backdrop design تصميم خلفية يوم الأخلاقيات لوريال"
+                   data-img="MockUp.jpg"
+                   data-tag-en="Event Branding" data-tag-ar="تصميم فعاليات"
+                   data-title-en="L'Oréal Ethics Day Backdrop Design"
+                   data-title-ar="تصميم خلفية فعالية يوم الأخلاقيات - لوريال"
+                   data-desc-en="A professional event backdrop designed for L'Oréal's 11th Ethics Day, featuring elegant branding, a modern curved display structure, and a vibrant purple visual identity that reflects the company's values of integrity, respect, courage, and transparency."
+                   data-desc-ar="تصميم احترافي لخلفية فعالية يوم الأخلاقيات الحادي عشر لشركة لوريال، يتميز بعرض منحني أنيق وهوية بصرية باللون البنفسجي تعكس قيم الشركة المتمثلة في النزاهة والاحترام والشجاعة والشفافية.">
+                    <div class="project-image-wrapper">
+                        <img src="MockUp.jpg" alt="L'Oréal Ethics Day Backdrop Design" class="project-image">
+                        <div class="project-overlay"><span class="project-overlay-tag">Event Branding</span></div>
+                    </div>
+                    <div class="project-info">
+                        <div class="lang-en">
+                            <h3>L'Oréal Ethics Day Backdrop Design</h3>
+                            <p>A professional event backdrop designed for L'Oréal's 11th Ethics Day, featuring elegant branding, a modern curved display structure, and a vibrant purple visual identity that reflects the company's values.</p>
+                            <span class="project-view-link">View Details <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                        <div class="lang-ar">
+                            <h3>تصميم خلفية فعالية يوم الأخلاقيات - لوريال</h3>
+                            <p>تصميم احترافي لخلفية فعالية يوم الأخلاقيات الحادي عشر لشركة لوريال، يتميز بهوية بصرية أنيقة باللون البنفسجي وهيكل عرض منحني يعكس قيم النزاهة والاحترام والشجاعة والشفافية.</p>
+                            <span class="project-view-link">عرض التفاصيل <i class="fa-solid fa-arrow-left"></i></span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="lang-en">Arabia Print</h4>
+                <h4 class="lang-ar">أرابيا برينت</h4>
+                <p class="lang-en">Delivering top-tier printing and design services from 2000 up to 2026 and beyond.</p>
+                <p class="lang-ar">نقدم خدمات طباعة وتصميم من الدرجة الأولى منذ عام 2000 وحتى 2026 وما بعدها.</p>
+            </div>
+            <div class="footer-section">
+                <h4 class="lang-en">Phone Contacts</h4>
+                <h4 class="lang-ar">أرقام التواصل</h4>
+                <div class="footer-phones">
+                    <a href="tel:01000737315">01000737315</a>
+                    <a href="tel:01009922730">01009922730</a>
+                    <a href="tel:01008746697">01008746697</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4 class="lang-en">Email Support</h4>
+                <h4 class="lang-ar">الدعم عبر البريد</h4>
+                <div class="footer-emails">
+                    <a href="mailto:ahm.odi83@gmail.com">ahm.odi83@gmail.com</a>
+                    <a href="mailto:arabiaprint@outlook.com">arabiaprint@outlook.com</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4 class="lang-en">Social Media</h4>
+                <h4 class="lang-ar">التواصل الاجتماعي</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" class="fb-only-logo" title="Facebook">
+                        <img src="https://www.clipartmax.com/png/middle/243-2430357_facebook-logo-png-transparent-svg-vector-freebie-supply-facebook-logo-transparent.png" alt="Facebook">
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://whatsapp.com/channel/0029VbCcHuYDZ4LRU0UWfR33" target="_blank" class="whatsapp-only-logo" title="WhatsApp Channel">
+                        <img src="https://toppng.com/public/uploads/preview/whatsapp-logo-vector-11573849504ftryug0qkh.png" alt="WhatsApp">
+                        <span>WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-next-page">
+            <a href="HTML2.html" class="next-page-btn">
+                <span class="lang-en">Our Location <i class="fa-solid fa-arrow-right"></i></span>
+                <span class="lang-ar"><i class="fa-solid fa-arrow-left"></i> موقعنا</span>
+            </a>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Arabia Print. All rights reserved.</div>
+    </footer>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => { document.getElementById('loader').classList.add('hide'); }, 2400);
+            document.getElementById('page-transition').classList.remove('active');
+        });
+
+        const progressBar = document.getElementById('scroll-progress');
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+            progressBar.style.width = scrolled + '%';
+            backToTop.classList.toggle('show', window.scrollY > 400);
+        });
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+        }, { threshold: 0.12 });
+        reveals.forEach(el => observer.observe(el));
+
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+        });
+
+        const langToggle = document.getElementById('langToggle');
+        const searchInput = document.getElementById('projectSearch');
+        langToggle.addEventListener('click', () => {
+            const isAr = body.getAttribute('data-lang') === 'ar';
+            body.setAttribute('data-lang', isAr ? 'en' : 'ar');
+            langToggle.textContent = isAr ? 'AR' : 'EN';
+            searchInput.placeholder = isAr ? 'Search designs...' : 'ابحث عن تصميم...';
+        });
+
+        // ── ROTATING HERO TITLE ─────────────────────────────────
+        const heroWordsEn = ["Trusted", "Creative", "Professional", "Reliable", "Premium"];
+        const heroWordsAr = ["موثوق", "مبتكر", "محترف", "متميز", "فاخر"];
+        let heroWordIndex = 0;
+
+        function buildHeroRotate(containerId, words) {
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            el.innerHTML = '';
+            words.forEach((w, i) => {
+                const span = document.createElement('span');
+                span.className = 'hero-rotate-word' + (i === 0 ? ' active' : '');
+                span.textContent = w;
+                el.appendChild(span);
+            });
+        }
+
+        function rotateHeroWord() {
+            [['heroRotateEn', heroWordsEn], ['heroRotateAr', heroWordsAr]].forEach(([id, words]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const spans = el.querySelectorAll('.hero-rotate-word');
+                const current = heroWordIndex % words.length;
+                const next = (heroWordIndex + 1) % words.length;
+
+                spans[current].classList.remove('active');
+                spans[current].classList.add('exit-up');
+                spans[next].classList.remove('exit-up');
+                spans[next].classList.add('active');
+            });
+            heroWordIndex++;
+        }
+
+        buildHeroRotate('heroRotateEn', heroWordsEn);
+        buildHeroRotate('heroRotateAr', heroWordsAr);
+        setInterval(rotateHeroWord, 2000);
+
+        // ── CIRCULAR TEAM TESTIMONIALS ─────────────────────────────────
+        const ctTeam = [
+            {
+                name: "Ahmed",
+                nameAr: "أحمد",
+                role: "Photoshop Specialist",
+                roleAr: "أخصائي فوتوشوب",
+                quote: "Every print job that passes through our hands gets the same level of care — I make sure the colours are perfect, the details are sharp, and every client walks away proud of their brand.",
+                quoteAr: "كل طباعة تمر عبر أيدينا تحظى بنفس القدر من الاهتمام — أحرص على أن تكون الألوان مثالية والتفاصيل حادة وكل عميل يفخر بهويته.",
+                phone: "tel:01000737315",
+                phoneTxt: "Call Ahmed",
+                phoneTxtAr: "اتصل بأحمد",
+                src: "Screenshot 2026-06-11 131732.png"
+            },
+            {
+                name: "Ehab",
+                nameAr: "إيهاب",
+                role: "Financial Director",
+                roleAr: "المدير المالي",
+                quote: "Running Arabia Print's finances means ensuring that quality never has to be compromised. I keep the business strong so the team can focus on delivering excellence every single day.",
+                quoteAr: "إدارة الأمور المالية في أرابيا برينت تعني ضمان عدم المساومة على الجودة أبدًا. أحافظ على قوة الشركة حتى يتمكن الفريق من تقديم التميز يوميًا.",
+                phone: "tel:01009922730",
+                phoneTxt: "Call Ehab",
+                phoneTxtAr: "اتصل بإيهاب",
+                src: "Screenshot 2026-06-11 131754.png"
+            },
+            {
+                name: "Sayed",
+                nameAr: "سيد",
+                role: "Founder",
+                roleAr: "المؤسس",
+                quote: "I started Arabia Print in 2000 with a simple belief: that quality printing builds trust, and trust builds businesses. 25 years later, that belief still drives everything we do.",
+                quoteAr: "أسس أسرت أرابيا برينت عام 2000 بإيمان بسيط: أن الطباعة الجيدة تبني الثقة، والثقة تبني الأعمال. بعد 25 عامًا، هذا الإيمان لا يزال يحرك كل ما نقوم به.",
+                phone: "tel:01008746697",
+                phoneTxt: "Call Sayed",
+                phoneTxtAr: "اتصل بسيد",
+                src: "Screenshot 2026-06-11 131805.png"
+            }
+        ];
+
+        let ctActive = 0;
+        let ctAutoplay = null;
+        const ctStage = document.getElementById('ctStage');
+        const ctContent = document.getElementById('ctContent');
+        const ctDotsEl = document.getElementById('ctDots');
+
+        function ctGetLang() { return document.body.getAttribute('data-lang') || 'en'; }
+
+        function ctBuildImages() {
+            ctStage.innerHTML = '';
+            ctTeam.forEach((t, i) => {
+                const img = document.createElement('img');
+                img.src = t.src;
+                img.alt = t.name;
+                img.className = 'ct-img';
+                img.dataset.index = i;
+                ctStage.appendChild(img);
+            });
+        }
+
+        function ctPositionImages() {
+            const imgs = ctStage.querySelectorAll('.ct-img');
+            if(imgs.length === 0) return;
+            const W = ctStage.offsetWidth;
+            const gap = Math.min(86, Math.max(60, 60 + 26 * ((W - 1024) / (1456 - 1024))));
+            const stickUp = gap * 0.8;
+            const n = ctTeam.length;
+            imgs.forEach((img, i) => {
+                const left = (ctActive - 1 + n) % n;
+                const right = (ctActive + 1) % n;
+                if (i === ctActive) {
+                    img.style.cssText = `z-index:3;opacity:1;pointer-events:auto;transform:translateX(0) translateY(0) scale(1) rotateY(0deg);transition:all 0.75s cubic-bezier(0.4,2,0.3,1);`;
+                } else if (i === left) {
+                    img.style.cssText = `z-index:2;opacity:1;pointer-events:auto;transform:translateX(-${gap}px) translateY(-${stickUp}px) scale(0.85) rotateY(15deg);transition:all 0.75s cubic-bezier(0.4,2,0.3,1);`;
+                } else if (i === right) {
+                    img.style.cssText = `z-index:2;opacity:1;pointer-events:auto;transform:translateX(${gap}px) translateY(-${stickUp}px) scale(0.85) rotateY(-15deg);transition:all 0.75s cubic-bezier(0.4,2,0.3,1);`;
+                } else {
+                    img.style.cssText = `z-index:1;opacity:0;pointer-events:none;transition:all 0.75s cubic-bezier(0.4,2,0.3,1);`;
+                }
+            });
+        }
+
+        function ctBuildDots() {
+            ctDotsEl.innerHTML = '';
+            ctTeam.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'ct-dot' + (i === ctActive ? ' active' : '');
+                btn.setAttribute('aria-label', 'Go to slide ' + (i+1));
+                btn.addEventListener('click', () => ctGo(i));
+                ctDotsEl.appendChild(btn);
+            });
+        }
+
+        function ctRenderContent() {
+            const lang = ctGetLang();
+            const t = ctTeam[ctActive];
+            const name = lang === 'ar' ? t.nameAr : t.name;
+            const role = lang === 'ar' ? t.roleAr : t.role;
+            const quote = lang === 'ar' ? t.quoteAr : t.quote;
+            const phoneTxt = lang === 'ar' ? t.phoneTxtAr : t.phoneTxt;
+            const words = quote.split(' ').map((w, i) =>
+                `<span class="ct-word" style="animation-delay:${0.025*i}s">${w} </span>`
+            ).join('');
+            ctContent.innerHTML = `
+                <div class="ct-content-inner">
+                    <span class="ct-role">${role}</span>
+                    <h3 class="ct-name">${name}</h3>
+                    <div class="ct-divider"></div>
+                    <p class="ct-quote">${words}</p>
+                    <a href="${t.phone}" class="ct-call-btn">
+                        <i class="fa-solid fa-phone"></i> ${phoneTxt}
+                    </a>
+                </div>`;
+        }
+
+        function ctGo(index) {
+            ctActive = (index + ctTeam.length) % ctTeam.length;
+            ctPositionImages();
+            ctRenderContent();
+            ctBuildDots();
+        }
+
+        function ctNext() { ctStopAuto(); ctGo(ctActive + 1); }
+        function ctPrev() { ctStopAuto(); ctGo(ctActive - 1); }
+        function ctStartAuto() { ctAutoplay = setInterval(() => ctGo(ctActive + 1), 5000); }
+        function ctStopAuto() { if (ctAutoplay) { clearInterval(ctAutoplay); ctAutoplay = null; } }
+
+        ctBuildImages();
+        ctBuildDots();
+        ctRenderContent();
+        ctPositionImages();
+        ctStartAuto();
+        window.addEventListener('resize', ctPositionImages);
+
+        document.getElementById('ctPrev').addEventListener('click', ctPrev);
+        document.getElementById('ctNext').addEventListener('click', ctNext);
+
+        langToggle.addEventListener('click', () => setTimeout(ctRenderContent, 10));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { ctPrev(); }
+            if (e.key === 'ArrowRight') { ctNext(); }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            document.querySelectorAll('.project-item').forEach(item => {
+                const tags = item.getAttribute('data-name').toLowerCase();
+                item.style.display = tags.includes(query) ? 'flex' : 'none';
+            });
+        });
+
+        // ── PROJECT DETAIL NAVIGATION WITH PAGE TRANSITION ─────────────
+        const pageTransition = document.getElementById('page-transition');
+        document.querySelectorAll('.project-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lang = body.getAttribute('data-lang') || 'en';
+                const data = {
+                    img: link.dataset.img,
+                    tag: lang === 'ar' ? link.dataset.tagAr : link.dataset.tagEn,
+                    title: lang === 'ar' ? link.dataset.titleAr : link.dataset.titleEn,
+                    desc: lang === 'ar' ? link.dataset.descAr : link.dataset.descEn,
+                    lang: lang
+                };
+                const params = new URLSearchParams(data);
+                const url = 'html3.html?' + params.toString();
+
+                pageTransition.classList.add('active');
+                setTimeout(() => { window.location.href = url; }, 550);
+            });
+        });
+    </script>
+</body>
+</html>

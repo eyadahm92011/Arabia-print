@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabia Print | Location & Hours</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ─── LOADING SCREEN ─────────────────────────────────────────── */
+        #loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0a1628;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 2rem;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+        #loader.hide { opacity: 0; visibility: hidden; }
+        .loader-logo-wrap {
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .loader-ring {
+            position: absolute; width: 130px; height: 130px;
+            border-radius: 50%; border: 3px solid transparent;
+            border-top-color: #0d9488; border-right-color: rgba(13,148,136,0.3);
+            animation: spin 1.2s linear infinite;
+        }
+        .loader-ring-outer {
+            width: 155px; height: 155px;
+            border-top-color: transparent;
+            border-bottom-color: #5c8ceb; border-left-color: rgba(92,140,235,0.3);
+            animation: spin 2s linear infinite reverse;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-logo-img {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: contain;
+            background: #fff; padding: 6px;
+            box-shadow: 0 0 30px rgba(13,148,136,0.4);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(13,148,136,0.3); }
+            50% { box-shadow: 0 0 45px rgba(13,148,136,0.7), 0 0 70px rgba(92,140,235,0.3); }
+        }
+        .loader-brand {
+            font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+            color: #fff; letter-spacing: 3px; text-transform: uppercase;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.3s;
+        }
+        .loader-brand span { color: #0d9488; }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loader-bar-wrap {
+            width: 220px; height: 3px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.5s;
+        }
+        .loader-bar {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #5c8ceb, #0d9488); border-radius: 3px;
+            animation: fill-bar 2s cubic-bezier(0.4,0,0.2,1) forwards; animation-delay: 0.5s;
+        }
+        @keyframes fill-bar { to { width: 100%; } }
+        .loader-tagline {
+            color: rgba(255,255,255,0.4); font-size: 0.78rem; letter-spacing: 2.5px;
+            text-transform: uppercase; font-family: 'Inter', sans-serif;
+            animation: fade-in-up 0.8s ease forwards; opacity: 0; animation-delay: 0.7s;
+        }
+
+        /* ─── RESET & BASE ───────────────────────────────────────────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+
+        body {
+            background: #111d2b;
+            color: #fff;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2rem;
+        }
+
+        /* ─── CARD WRAPPER ───────────────────────────────────────────── */
+        .location-section {
+            width: 100%; max-width: 1050px;
+            background: #1a2535;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: card-in 0.8s cubic-bezier(0.165,0.84,0.44,1) both;
+            animation-delay: 0.3s;
+        }
+        @keyframes card-in {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── TOP NAV BACK LINK ─────────────────────────────────────── */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; letter-spacing: 0.5px;
+            margin-bottom: 2rem; transition: color 0.2s, gap 0.2s;
+        }
+        .back-link:hover { color: #0d9488; gap: 12px; }
+        .back-link i { font-size: 0.75rem; }
+
+        /* ─── SECTION HEADER ─────────────────────────────────────────── */
+        .section-title {
+            font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+            color: #0d9488; margin-bottom: 2.5rem;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-title i { font-size: 1.3rem; }
+
+        /* ─── LAYOUT ─────────────────────────────────────────────────── */
+        .location-container {
+            display: grid; grid-template-columns: 1fr 1.6fr;
+            gap: 2.5rem; align-items: start;
+        }
+        @media (max-width: 768px) {
+            .location-container { grid-template-columns: 1fr; gap: 2rem; }
+            .location-section { padding: 2rem 1.5rem; }
+            body { padding: 1.5rem 1rem; }
+        }
+
+        /* ─── INFO ITEMS ─────────────────────────────────────────────── */
+        .location-details { display: flex; flex-direction: column; gap: 0; }
+
+        .info-item {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 1.1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+        .info-item:last-of-type { border-bottom: none; }
+        .info-icon-wrap {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(13,148,136,0.12); border: 1px solid rgba(13,148,136,0.25);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: background 0.2s;
+        }
+        .info-item:hover .info-icon-wrap { background: rgba(13,148,136,0.25); }
+        .info-icon-wrap i { color: #0d9488; font-size: 1rem; }
+        .info-text { display: flex; flex-direction: column; gap: 2px; }
+        .info-label {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px;
+            color: rgba(255,255,255,0.35); font-weight: 600;
+        }
+        .info-value { font-size: 0.96rem; color: #e2e8f0; line-height: 1.5; font-weight: 500; }
+
+        /* ─── HOURS TABLE ────────────────────────────────────────────── */
+        .hours-grid {
+            display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1.2rem;
+            margin-top: 0.5rem;
+        }
+        .hours-day { font-size: 0.88rem; color: rgba(255,255,255,0.5); font-weight: 500; }
+        .hours-time { font-size: 0.88rem; color: #e2e8f0; font-weight: 600; }
+        .hours-time.closed { color: #f87171; }
+        .hours-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.3);
+            color: #34d399; padding: 3px 10px; border-radius: 50px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+        .hours-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #34d399; }
+
+        /* ─── DIRECTIONS BUTTON ──────────────────────────────────────── */
+        .directions-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: #0d9488; color: #fff; padding: 13px 26px;
+            border-radius: 50px; text-decoration: none; font-size: 0.92rem;
+            font-weight: 700; align-self: flex-start; margin-top: 1.5rem;
+            box-shadow: 0 6px 20px rgba(13,148,136,0.35);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .directions-btn:hover {
+            background: #0b7a70; transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(13,148,136,0.5);
+        }
+
+        /* ─── MAP ────────────────────────────────────────────────────── */
+        .map-wrapper {
+            border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            height: 320px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .map-wrapper::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(13,148,136,0.08) 0%, transparent 30%);
+            pointer-events: none; z-index: 1;
+        }
+        .map-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        /* ─── FOOTER STRIP ───────────────────────────────────────────── */
+        .page-footer {
+            margin-top: 1.5rem; text-align: center;
+            font-size: 0.78rem; color: rgba(255,255,255,0.2);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loader">
+        <div class="loader-logo-wrap">
+            <div class="loader-ring loader-ring-outer"></div>
+            <div class="loader-ring"></div>
+            <img src="479348739_1168674148599298_1727170209279400086_n.jpg" alt="Arabia Print Logo" class="loader-logo-img">
+        </div>
+        <div class="loader-brand">Arabia <span>Print</span></div>
+        <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+        <div class="loader-tagline">Crafting Print Excellence Since 2000</div>
+    </div>
+
+    <section class="location-section">
+
+        <a href="HTML1.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Main Page
+        </a>
+
+        <h3 class="section-title">
+            <i class="fa-solid fa-location-dot"></i> Our Location
+        </h3>
+
+        <div class="location-container">
+            <div class="location-details">
+
+                <div class="info-item">
+                    <div class="info-icon-wrap"><i class="fa-solid fa-map-pin"></i></div>
+                    <div class="info-text">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">26 Abu Rawash, Imbaba<br>Giza Governorate, Egypt</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon-wrap"><i class="fa-solid fa-clock"></i></div>
+                    <div class="info-text">
+                        <span class="info-label">Working Hours <span class="hours-badge">Open Now</span></span>
+                        <div class="hours-grid">
+                            <span class="hours-day">Sat – Thu</span>
+                            <span class="hours-time">9:00 AM – 8:00 PM</span>
+                            <span class="hours-day">Friday</span>
+                            <span class="hours-time closed">Closed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon-wrap"><i class="fa-solid fa-landmark"></i></div>
+                    <div class="info-text">
+                        <span class="info-label">Nearby Landmark</span>
+                        <span class="info-value">Near Imbaba Airport, Giza</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-icon-wrap"><i class="fa-solid fa-phone"></i></div>
+                    <div class="info-text">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">
+                            <a href="tel:01000737315" style="color:#0d9488;text-decoration:none;display:block">01000737315</a>
+                            <a href="tel:01009922730" style="color:#0d9488;text-decoration:none;display:block">01009922730</a>
+                        </span>
+                    </div>
+                </div>
+
+                <a href="https://maps.google.com/?q=Arabia+Print+Imbaba" target="_blank" class="directions-btn">
+                    <i class="fa-solid fa-location-arrow"></i> Get Directions
+                </a>
+            </div>
+
+            <div class="map-wrapper">
+                <iframe
+                    src="https://maps.google.com/maps?q=Arabia%20Print%20Imbaba&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <div class="page-footer">&copy; 2026 Arabia Print. All rights reserved.</div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hide');
+            }, 2400);
+        });
+    </script>
+</body>
+</html>
